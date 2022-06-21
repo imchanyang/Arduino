@@ -33,7 +33,6 @@ unsigned int width_1, width_2, height;
 int same = 0;
 int count = 0;
 
-
 void UartRxProtocol() {
   unsigned char Uart0_Data;
   if(Serial.available()){
@@ -98,20 +97,18 @@ void Serial_Main0(void) {
 
 //------------------------------------------------------------------------------------------
 void turnRight(int speed){
-  analogWrite(4, speed+15); digitalWrite(28, LOW); digitalWrite(29, HIGH);
-  analogWrite(5, speed-15); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
+  analogWrite(4, speed+20); digitalWrite(28, LOW); digitalWrite(29, HIGH);
+  analogWrite(5, speed); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
 }
 void turnLeft(int speed){
-  analogWrite(4, speed-15); digitalWrite(28, LOW); digitalWrite(29, HIGH); 
-  analogWrite(5, speed+15); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
-}
-
-void goStraight(int speed){
-  analogWrite(4, speed+20); digitalWrite(28, LOW); digitalWrite(29, HIGH); 
+  analogWrite(4, speed); digitalWrite(28, LOW); digitalWrite(29, HIGH); 
   analogWrite(5, speed+20); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
 }
 
-
+void goStraight(int speed){
+  analogWrite(4, speed); digitalWrite(28, LOW); digitalWrite(29, HIGH); 
+  analogWrite(5, speed); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
+}
 void directionStop(int speed){
   analogWrite(4, speed); digitalWrite(28, HIGH); digitalWrite(29, LOW); 
   analogWrite(5, speed); digitalWrite(30, HIGH); digitalWrite(31, LOW);
@@ -125,6 +122,7 @@ void binglebangle(){
   analogWrite(5, 35); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
 }
 
+
 void ballTracking() {
   // 방향
   // 중앙에 있는 경우
@@ -134,11 +132,11 @@ void ballTracking() {
   }
   // 좌측에 있는 경우
   else if(0 <= X_center && X_center < 130 && signature == 1) {
-      turnRight(45);
+      turnRight(50);
   }
   // 우측에 있는 경우
   else if(200 <= X_center && X_center < 317 && signature == 1) {
-      turnLeft(45);
+      turnLeft(50);
   }
   // 못찾았을 경우
   if(count >= 20 ) {
@@ -155,11 +153,11 @@ void ballTrackingBlue() {
   }
   // 좌측에 있는 경우
   else if(0 <= X_center && X_center < 135 && signature == 4) {
-      turnRight(45);
+      turnRight(50);
   }
   // 우측에 있는 경우
   else if(195 <= X_center && X_center < 317 && signature == 4) {
-      turnLeft(45);
+      turnLeft(50);
   }
   // 못찾았을 경우
   if(count >= 20) {
@@ -170,7 +168,7 @@ void ballTrackingBlue() {
 void goalTrackingRed() {
     binglebangle();
     if(135 <= X_center && X_center < 195 && signature == 3) {
-     goStraight(70);
+     goStraight(80);
   }
   // 좌측에 있는 경우
   else if(0 <= X_center && X_center < 135 && signature == 3) {
@@ -187,9 +185,9 @@ void goalTrackingRed() {
 }
 
 void goalTrackingGreen() {
-    binglebangle();
+
     if(135 <= X_center && X_center < 195 && signature == 2) {
-     goStraight(70);
+     goStraight(80);
   }
   // 좌측에 있는 경우
   else if(0 <= X_center && X_center < 135 && signature == 2) {
@@ -247,8 +245,6 @@ void Uart1() {
     count = 0;
   }
   same = X_center;
-
-  
 //------------------------------------------------------
   Serial1.print("count : ");
   Serial1.println(count);
@@ -265,7 +261,7 @@ void Uart1() {
   Serial1.print("sig");
   Serial1.print(':');
   Serial1.println(signature);
-  
+
 // ------------------------------------------------
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -276,37 +272,21 @@ void Uart1() {
 
   duration = pulseIn(echoPin, HIGH);
   distance = duration * 0.034 /2;
-  Serial1.print("asdfas");
-  Serial1.println(distance);
-
-// --------------------------------------------------- 
- if(distance > 6) {
-    ballTracking();
-//    ballTrackingBlue();
-  }
-  else {
-//    stop(1);
-   goalTrackingGreen();
-//     goalTrackingRed();
-    //binglebangle();
- }
- 
-
   
-// ----------------------승부차기---------------------------
-//  sbcg();
-
-//  defence();
-
 
 // 수비모드
-//  if(distance > 20 && signature == 2) { 
-//    goalTrackingGreen();
-//    
-//  }
-//  else {
-//    binglebangle();
-//  }
+ if(distance > 35 ) { 
+    goalTrackingGreen();
+  
+ }
+ else if(distance < 35){
+    timer.setInterval(200, Uart2);
+  
+ }
+}
+
+void Uart2() {
+  binglebangle();
 }
 
 

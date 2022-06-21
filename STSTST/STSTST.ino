@@ -99,16 +99,16 @@ void Serial_Main0(void) {
 //------------------------------------------------------------------------------------------
 void turnRight(int speed){
   analogWrite(4, speed+15); digitalWrite(28, LOW); digitalWrite(29, HIGH);
-  analogWrite(5, speed-15); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
+  analogWrite(5, speed); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
 }
 void turnLeft(int speed){
-  analogWrite(4, speed-15); digitalWrite(28, LOW); digitalWrite(29, HIGH); 
+  analogWrite(4, speed); digitalWrite(28, LOW); digitalWrite(29, HIGH); 
   analogWrite(5, speed+15); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
 }
 
 void goStraight(int speed){
-  analogWrite(4, speed+20); digitalWrite(28, LOW); digitalWrite(29, HIGH); 
-  analogWrite(5, speed+20); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
+  analogWrite(4, speed); digitalWrite(28, LOW); digitalWrite(29, HIGH); 
+  analogWrite(5, speed); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
 }
 
 
@@ -121,8 +121,8 @@ void stop(int speed){
   analogWrite(5, speed); digitalWrite(30, HIGH); digitalWrite(31, LOW);
 }
 void binglebangle(){
-  analogWrite(4, 35); digitalWrite(28, HIGH); digitalWrite(29, HIGH); 
-  analogWrite(5, 35); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
+  analogWrite(4, 70); digitalWrite(28, HIGH); digitalWrite(29, HIGH); 
+  analogWrite(5, 70); digitalWrite(30, HIGH); digitalWrite(31, HIGH);
 }
 
 void ballTracking() {
@@ -130,15 +130,15 @@ void ballTracking() {
   // 중앙에 있는 경우
   binglebangle();
   if(130 <= X_center && X_center < 200 && signature == 1) {
-     goStraight(70);
+     goStraight(60);
   }
   // 좌측에 있는 경우
   else if(0 <= X_center && X_center < 130 && signature == 1) {
-      turnRight(45);
+      turnRight(35);
   }
   // 우측에 있는 경우
   else if(200 <= X_center && X_center < 317 && signature == 1) {
-      turnLeft(45);
+      turnLeft(35);
   }
   // 못찾았을 경우
   if(count >= 20 ) {
@@ -151,15 +151,15 @@ void ballTrackingBlue() {
   // 중앙에 있는 경우
   binglebangle();
   if(125 <= X_center && X_center < 195 && signature == 4) {
-     goStraight(70);
+     goStraight(60);
   }
   // 좌측에 있는 경우
   else if(0 <= X_center && X_center < 135 && signature == 4) {
-      turnRight(45);
+      turnRight(35);
   }
   // 우측에 있는 경우
   else if(195 <= X_center && X_center < 317 && signature == 4) {
-      turnLeft(45);
+      turnLeft(35);
   }
   // 못찾았을 경우
   if(count >= 20) {
@@ -170,15 +170,15 @@ void ballTrackingBlue() {
 void goalTrackingRed() {
     binglebangle();
     if(135 <= X_center && X_center < 195 && signature == 3) {
-     goStraight(70);
+     goStraight(60);
   }
   // 좌측에 있는 경우
   else if(0 <= X_center && X_center < 135 && signature == 3) {
-      turnRight(45);
+      turnRight(35);
   }
   // 우측에 있는 경우
   else if(195 <= X_center && X_center < 317 && signature == 3) {
-      turnLeft(45);
+      turnLeft(35);
   }
   // 못찾았을 경우
   if(count >= 20 ) {
@@ -189,15 +189,15 @@ void goalTrackingRed() {
 void goalTrackingGreen() {
     binglebangle();
     if(135 <= X_center && X_center < 195 && signature == 2) {
-     goStraight(70);
+     goStraight(60);
   }
   // 좌측에 있는 경우
   else if(0 <= X_center && X_center < 135 && signature == 2) {
-      turnRight(45);
+      turnRight(35);
   }
   // 우측에 있는 경우
   else if(195 <= X_center && X_center < 317 && signature == 2) {
-      turnLeft(45);
+      turnLeft(35);
   }
   // 못찾았을 경우
   if(count >= 20 ) {
@@ -280,33 +280,22 @@ void Uart1() {
   Serial1.println(distance);
 
 // --------------------------------------------------- 
- if(distance > 6) {
+
     ballTracking();
-//    ballTrackingBlue();
-  }
-  else {
-//    stop(1);
-   goalTrackingGreen();
-//     goalTrackingRed();
-    //binglebangle();
+
+  if (distance < 10) {
+  stop(1);
+  timer.setInterval(200, Uart2);
+
  }
+
+}
+
+void Uart2() {
+
+ binglebangle();
  
-
-  
-// ----------------------승부차기---------------------------
-//  sbcg();
-
-//  defence();
-
-
-// 수비모드
-//  if(distance > 20 && signature == 2) { 
-//    goalTrackingGreen();
-//    
-//  }
-//  else {
-//    binglebangle();
-//  }
+ 
 }
 
 
